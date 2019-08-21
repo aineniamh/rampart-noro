@@ -1,0 +1,13 @@
+{
+	"annotation": {
+		"name": "Annotate reads",
+		"path": "pipelines/demux_map",
+		"config": "pipelines/demux_map/config.yaml"
+	},
+	"post-processing": [
+		{
+			"name": "Analyse to consensus",
+			"path": "pipelines/analysis_master"
+		}
+	]
+}
