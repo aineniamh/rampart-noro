@@ -22,7 +22,7 @@ We aim to produce an end-to-end system that can provide real-time access to geno
 This pipeline is developed as part of a 'best-practices' protocol for clinical nanopore sequencing of norovirus. The complementary upstream extraction, amplification, library prep and sequencing protocol can be found [here](protocol/Norovirus-2kb-Nanopore-sequencing-protocol.md) (Luke Meredith). A tiled amplicon approach is currently being tested by Paola Resende with 2kb primers developed using [Primal Scheme](http://primal.zibraproject.org/) (Luke Meredith). Amplicons produced by the scheme, spanning the genome, are shown in the figure below. To cover the diversity of norovirus, multiple primer schemes were created with different sets of reference sequences from GenBank. 
 
 
-<img src="https://github.com/aineniamh/rampart-noro/blob/master/primer-schemes/noro2kb/V2/noro2kb.amplicons.poster.png">
+<!-- <img src="https://github.com/aineniamh/rampart-noro/blob/master/primer-schemes/noro2kb/V2/noro2kb.amplicons.poster.png"> -->
 
 ## pipeline
 
@@ -44,9 +44,9 @@ This pipeline can be run independently as part of a stand-alone analysis or can 
 11. [``racon``](https://github.com/isovic/racon) and [``minimap2``](https://github.com/lh3/minimap2) are run iteratively four times against the fastq reads and then a final polishing consensus-generation step is performed using [``medaka``](https://github.com/nanoporetech/medaka). 
 12. A markdown report is generated, summarising the viral profile of each sample. 
 
-<img src="https://github.com/aineniamh/rampart-noro/blob/master/figures/noro_amplicons1.png">
-<img src="https://github.com/aineniamh/rampart-noro/blob/master/figures/noro_amplicons2.png">
 
+<img src="https://github.com/aineniamh/rampart-noro/blob/master/figures/noro_amplicons2.png">
+<img src="https://github.com/aineniamh/rampart-noro/blob/master/figures/noro_amplicons1.png">
 Screenshot of RAMPART's front end showing norovirus data. 
 
 
