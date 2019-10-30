@@ -1,13 +1,27 @@
 {
-	"annotation": {
-		"name": "Annotate reads",
-		"path": "pipelines/demux_map",
-		"config": "pipelines/demux_map/config.yaml"
-	},
-	"post-processing": [
+	"analysis": 
 		{
 			"name": "Analyse to consensus",
-			"path": "pipelines/analysis_master"
+            "path": "pipelines/analysis_master",
+            "processing": true,
+            "config_file": "config.yaml",
+            "config": " min_reads=70 min_pcent=5",
+            "requires": [
+                {
+                    "file": "references.fasta",
+                    "config_key": "references_file"
+                }
+            ],
+            "run_per_sample": true,
+            "options": {
+                "min_read_length": true,
+                "max_read_length": true,
+                "references_file": true,
+                "sample_name": true,
+                "barcodes": true,
+                "basecalled_path": true,
+                "annotated_path": true,
+                "output_path": true
+            }
 		}
-	]
 }
