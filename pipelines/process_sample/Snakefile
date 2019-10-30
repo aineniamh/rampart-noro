@@ -3,18 +3,7 @@ from Bio import SeqIO
 
 ##### Configuration #####
 
-barcodes = config["barcodes"].split(',')
-barcode_string = ""
-for i in barcodes:
-    barcode_string+=" {}".format(i)
-
-sample_string = ""
-if config["sample"]:
-    sample_string = config["sample"]
-else:
-    sample_string = "_".join(barcodes)
-    config["sample"]=sample_string
-
+config["analysis_stem"]=[i for i in config["analysis_stem"].split(',')]
 
 ##### Target rules #####
 
@@ -24,6 +13,5 @@ rule all:
         expand(config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/mapped.paf",sample=config["sample"],analysis_stem=config["analysis_stem"])
 
 ##### Modules #####
+
 include: "rules/map_polish.smk"
-
-

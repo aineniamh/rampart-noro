@@ -51,7 +51,7 @@ rule make_report:
         report=output_dir +"/whoami/{barcode}/barcode_{barcode}.report.md",
         seqs=output_dir +"/whoami/{barcode}/barcode_{barcode}.fasta"
     shell:
-        "python scripts/generate_report.py "
+        "python rules/generate_report.py "
         "--blast_file {input.blast} --detailed_blast_file {input.blast_detailed} "
         "--blast_db {input.db} --detailed_blast_db {input.db_detailed} "
         "--consensus {input.consensus} "
