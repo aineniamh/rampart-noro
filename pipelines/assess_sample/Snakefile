@@ -1,8 +1,0 @@
-##### Target rules #####
-
-rule all:
-    input:
-        expand(config["output_path"] + "/binned_{sample}/config.yaml",sample=config["sample"])
-
-##### Modules #####
-include: "rules/assess_bin.smk"
