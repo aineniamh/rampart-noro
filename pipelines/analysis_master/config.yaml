@@ -1,10 +1,8 @@
 ##### Where is the data? #####
 
-input_path: path/to/basecalled 
+input_path: path/to/data
 annotated_path: path/to/csv
 output_path: path/to/binned #where rampart will put the binned/ filtered files 
-
-config: pipelines/analysis_master/config.yaml
 
 ##### Mapping reference panel #####
 
@@ -12,17 +10,15 @@ references_file: references.fasta
 
 ##### Barcodes to process #####
 
-sample: test_sample
-barcodes: NBXX,NBYY
 
 ##### Read length filtering range #####
 
-min_length: 1300
-max_length: 2500
+min_read_length: 1300
+max_read_length: 2500
 
 ##### Read thresholds #####
 
 min_reads: 100
-min_pcent: 2
+min_pcent: 5
 
 ##### Analysis Stem #####
