@@ -1,6 +1,8 @@
 {
     "name": "ARTIC Norovirus protocol v1.0",
     "description": "Amplicon based sequencing of Norovirus.",
-    "url": "http://artic.network/"
-    
+    "url": "http://artic.network/",
+    "annotationOptions":{
+        "reference_fields":"genogroup[genogroup];genotype[genotype];loc_genotype[pol_genotype:0:5370,vp_genotype:5354:7584]"
+        }
   }
