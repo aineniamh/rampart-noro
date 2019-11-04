@@ -34,7 +34,7 @@ rule binlorry:
         output_prefix= config["output_path"] + "/binned_{sample}"
     output:
         fastq=config["output_path"] + "/binned_{sample}.fastq",
-        csv=config["output_path"] + "/binned_{sample}.csv"
+        csv=temp(config["output_path"] + "/binned_{sample}.csv")
     shell:
         "binlorry -i {params.path_to_reads:q} "
         "-t {params.report_dir:q} "
@@ -45,10 +45,29 @@ rule binlorry:
         "--filter-by barcode {params.barcodes} "
         "--out-report"
 
-rule assess_sample:
+rule assign_amplicon:
     input:
         reads= rules.binlorry.output.fastq,
         csv= rules.binlorry.output.csv,
+        amplicons = config["amplicon_csv"]
+    params:
+        sample = "{sample}",
+        path_to_script = workflow.current_basedir
+    output:
+        config["output_path"] + "/binned_{sample}.csv"
+    shell:
+        """
+        python {params.path_to_script}/assign_amplicon.py \
+        --reads {input.reads} \
+        --csv {input.csv} \
+        --output {params.output} \
+        --sample {params.sample}
+        """
+
+rule assess_sample:
+    input:
+        reads= rules.binlorry.output.fastq,
+        csv= rules.assign_amplicon.output.csv,
         refs = config["references_file"]
     params:
         sample = "{sample}",
@@ -60,7 +79,7 @@ rule assess_sample:
         t = temp(config["output_path"] + "/binned_{sample}/temp.txt")
     run:
         for i in shell(
-            "python {params.path_to_script}/parse_ref_and_depth.py "
+            "python {params.path_to_script}/parse_noro_ref_and_depth.py "
             "--reads {input.reads} "
             "--csv {input.csv} "
             "--output_path {params.output_path} "
