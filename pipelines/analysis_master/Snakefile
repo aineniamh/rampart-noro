@@ -47,33 +47,32 @@ rule binlorry:
 
 rule assign_amplicon:
     input:
-        reads= rules.binlorry.output.fastq,
         csv= rules.binlorry.output.csv,
         amplicons = config["amplicon_csv"]
     params:
         sample = "{sample}",
         path_to_script = workflow.current_basedir
     output:
-        config["output_path"] + "/binned_{sample}.csv"
+        config["output_path"] + "/binned_{sample}.amp_info.csv"
     shell:
         """
         python {params.path_to_script}/assign_amplicon.py \
-        --reads {input.reads} \
         --csv {input.csv} \
-        --output {params.output} \
-        --sample {params.sample}
+        --out_csv {output} \
+        --amplicons {input.amplicons}
         """
 
 rule assess_sample:
     input:
         reads= rules.binlorry.output.fastq,
-        csv= rules.assign_amplicon.output.csv,
+        csv= rules.assign_amplicon.output,
         refs = config["references_file"]
     params:
         sample = "{sample}",
         output_path = config["output_path"] + "/binned_{sample}",
         min_reads = config["min_reads"],
         min_pcent = config["min_pcent"],
+        bin_factor = config["bin_factor"],
         path_to_script = workflow.current_basedir
     output:
         t = temp(config["output_path"] + "/binned_{sample}/temp.txt")
@@ -83,9 +82,10 @@ rule assess_sample:
             "--reads {input.reads} "
             "--csv {input.csv} "
             "--output_path {params.output_path} "
-            "--references {input.refs} "
+            "--bin_factor {params.bin_factor} "
             "--min_reads {params.min_reads} "
             "--min_pcent {params.min_pcent} "
+            "--references {input.refs} "
             "--sample {params.sample}  && touch {output.t}", iterable=True):
 
             stems.store("analysis_stem",i)

@@ -1,12 +1,14 @@
 ##### Where is the data? #####
 
-input_path: path/to/data
+basecalled_path: path/to/data
 annotated_path: path/to/csv
 output_path: path/to/binned #where rampart will put the binned/ filtered files 
 
 ##### Mapping reference panel #####
 
 references_file: references.fasta
+amplicon_csv: primer_file.csv
+bin_factor: 
 
 ##### Barcodes to process #####
 
