@@ -13,5 +13,25 @@ rule all:
         expand(config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/mapped.paf",sample=config["sample"],analysis_stem=config["analysis_stem"])
 
 ##### Modules #####
-
+    
 include: "rules/map_polish.smk"
+
+rule trim_primers:
+    input:
+        ref = config["output_path"] + "/binned_{sample}/{analysis_stem}.fasta",
+        reads = config["output_path"]+"/binned_{sample}/{analysis_stem}.fastq",
+        csv = config["output_path"] + "/binned_{sample}/{analysis_stem}.csv",
+        amp_file = config["amplicon_file"]
+    params:
+        path_to_script = 
+    output:
+        config["output_path"]+"/binned_{sample}/{analysis_stem}.primer_trimmed.fastq"
+    shell:
+
+    
+        
+
+
+
+
+
