@@ -1,10 +1,11 @@
 rule files:
     params:
         ref=config["output_path"] + "/binned_{sample}/{analysis_stem}.fasta",
-        reads=config["output_path"]+"/binned_{sample}/{analysis_stem}.fastq"
+        reads=config["output_path"]+"/binned_{sample}/{analysis_stem}.primer_trimmed.fastq"
+
 rule minimap2_racon0:
     input:
-        reads=config["output_path"] + "/binned_{sample}/{analysis_stem}.fastq",
+        reads=rules.files.params.reads,
         ref=rules.files.params.ref
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/mapped.paf"

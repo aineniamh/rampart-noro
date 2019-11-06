@@ -103,10 +103,14 @@ def get_files_and_stems(in_csv, bin_factor, min_reads, output_path, references, 
             else:
                 amp = row["amplicon"] 
                 factor = row[bin_factor]
+                orf = ""
                 if amp in ["Amp123","Amp5"]:
-                    
+                    if amp == "Amp123":
+                        orf = "ORF1"
+                    else:
+                        orf = "ORF23"
                     for guide in analysis_guides[amp]:
-                        stem = f"{amp}_{guide[0]}"
+                        stem = f"{orf}_{guide[0]}"
                         if factor==guide[0]:
                             read_dict[stem].append(index)
 
@@ -114,10 +118,10 @@ def get_files_and_stems(in_csv, bin_factor, min_reads, output_path, references, 
                         
                 elif amp == "Amp4":
                     for guide in analysis_guides["Amp123"]:
-                        stem1 = f"Amp123_{guide[0]}"
+                        stem1 = f"ORF1_{guide[0]}"
                         read_dict[stem1].append(index)
                     for guide in analysis_guides["Amp5"]:
-                        stem2 = f"Amp5_{guide[0]}"
+                        stem2 = f"ORF23_{guide[0]}"
                         read_dict[stem2].append(index)
 
 

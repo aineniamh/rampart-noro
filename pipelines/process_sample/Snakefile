@@ -18,18 +18,23 @@ include: "rules/map_polish.smk"
 
 rule trim_primers:
     input:
-        ref = config["output_path"] + "/binned_{sample}/{analysis_stem}.fasta",
         reads = config["output_path"]+"/binned_{sample}/{analysis_stem}.fastq",
-        csv = config["output_path"] + "/binned_{sample}/{analysis_stem}.csv",
-        amp_file = config["amplicon_file"]
+        csv = config["output_path"] + "/binned_{sample}/{analysis_stem}.csv"
     params:
-        path_to_script = 
+        path_to_script = workflow.current_basedir
     output:
         config["output_path"]+"/binned_{sample}/{analysis_stem}.primer_trimmed.fastq"
     shell:
+        """
+        python {params.path_to_script}/trim_primers.py \
+        --csv {input.csv} \
+        --reads {input.reads} \
+        --output_reads {output}
+        """
 
-    
-        
+
+
+
 
 
 
