@@ -1,4 +1,6 @@
 import csv
+import sys
+import argparse
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 # at the moment just trims off 28 bases from the start and end of a read. 
 # Need to adapt to trimming more specifically
@@ -19,12 +21,11 @@ def parse_csv(file):
     data = [r for r in reader]
     return data
 
-def file_writer(output_reads,reads,trim):
+def file_writer(reads,output_reads,trim):
     trim = int(trim)
-    handle = open(output_reads, "w")
-    for title, seq, qual in FastqGeneralIterator(open(reads)) :
-        handle.write(f"@{title}\n{seq[trim:-trim]}\n+\n{qual[trim:-trim]}\n")
-    handle.close()
+    with open(output_reads, "w") as handle:
+        for title, seq, qual in FastqGeneralIterator(open(reads)):
+            handle.write(f"@{title}\n{seq[trim:-trim]}\n+\n{qual[trim:-trim]}\n")
 
 
 if __name__ == '__main__':
