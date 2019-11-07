@@ -26,7 +26,7 @@ rule trim_primers:
         config["output_path"]+"/binned_{sample}/{analysis_stem}.primer_trimmed.fastq"
     shell:
         """
-        python {params.path_to_script}/trim_primers.py \
+        python {params.path_to_script}/rules/trim_primers.py \
         --csv {input.csv} \
         --reads {input.reads} \
         --output_reads {output}
