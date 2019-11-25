@@ -215,10 +215,27 @@ rule medaka:
     shell:
         "medaka_consensus -i {input.basecalls} -d {input.draft} -o {params.outdir} -t 2 || touch {output}"
 
-rule gather_sequences:
+rule map_to_cns:
     input:
-        expand(config["output_path"] + "/binned_{{sample}}/medaka/{analysis_stem}/consensus.fasta", analysis_stem=config["analysis_stem"])
+        cns = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta",
+        reads = rules.files.params.reads
     output:
-        config["output_path"]+"/consensus_sequences/{sample}.fasta" # will need to rename the individual fasta seqs
+        paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
     shell:
-        "cat {input} > {output}" 
+        "minimap2 -x map-ont {input.ref} {input.reads} > {output}"
+
+rule mask_low_coverage_regions:
+    input:
+        cns = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta",
+        paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
+    params:
+        path_to_script = workflow.current_basedir
+    output:
+        config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.masked.fasta"
+    shell:
+        """
+        python {params.path_to_script}/rules/mask_low_coverage.py \
+        --cns {input.csv} \
+        --paf {input.reads} \
+        --masked_cns {output}
+        """
