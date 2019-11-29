@@ -16,6 +16,7 @@ rule all:
 ##### Modules #####
     
 include: "rules/map_polish.smk"
+include: "rules/mask_low_coverage.smk"
 
 rule trim_primers:
     input:

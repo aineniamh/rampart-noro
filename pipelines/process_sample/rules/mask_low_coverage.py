@@ -39,7 +39,6 @@ def get_coverage(paf, cns_len):
             map_span = range(start-1, end-1) #triple check this index thing
             for i in map_span:
                 coverage[i]+=1
-    print(coverage)
     return coverage
 
 def mask_bases(coverage_list, cns_seq, min_coverage):
@@ -61,9 +60,6 @@ if __name__ == '__main__':
     coverage = get_coverage(args.paf,cns_len)
 
     masked_seq = mask_bases(coverage, cns.seq, args.min_coverage)
-    print(args)
+
     with open(str(args.masked_cns), "w") as fw:
         fw.write(">{}\n{}\n".format(cns.description, masked_seq))
-
-
-

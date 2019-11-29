@@ -25,8 +25,12 @@ def trim_trailing_gaps(alignment):
             end_position = col
             break
 
-    print(f"\nTrimming trailing gaps in alignment.\nAlignment now from {start_position} to {end_position}.\n")    
-    return alignment[:,start_position:-end_position]
+    print(f"\nTrimming trailing gaps in alignment.\nAlignment now from {start_position} to {len(alignment)-end_position}.\n")   
+
+    if end_position == 0:
+        return alignment[:,start_position:]
+    else:
+        return alignment[:,start_position:-end_position]
 
 def remove_gaps(aln):
 
@@ -45,6 +49,7 @@ def remove_gaps(aln):
                 cns_string += 'N'
         else:
             cns_string+= col[1]
+
     return trimmed[1].id, cns_string
 
 #the rule is to replace a gap in the query with 'N' and to force delete a base that causes a gap in the reference
@@ -52,5 +57,5 @@ with open(args.output_seq, "w") as fw:
 
     cns_id, new_consensus = remove_gaps(args.alignment)
 
-    fw.write(f">{cns_id}{round_name} length={len(new_consensus)}\n{new_consensus}\n")
+    fw.write(f">{cns_id}{round_name} length={len(new_consensus)}\n{new_consensus.upper()}\n")
 
