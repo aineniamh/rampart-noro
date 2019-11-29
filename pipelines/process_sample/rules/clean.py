@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(description='Clean up coding consensus.')
 parser.add_argument("--alignment_with_ref", action="store", type=str, dest="alignment")
 parser.add_argument("--output_seq", action="store", type=str, dest="output_seq")
 parser.add_argument("--polish_round", action="store", type=str, dest="round")
+parser.add_argument("--name", action="store", type=str, dest="name")
 args = parser.parse_args()
 
 round_name = ''
@@ -57,5 +58,4 @@ with open(args.output_seq, "w") as fw:
 
     cns_id, new_consensus = remove_gaps(args.alignment)
 
-    fw.write(f">{cns_id}{round_name} length={len(new_consensus)}\n{new_consensus.upper()}\n")
-
+    fw.write(f">{args.name} accession={cns_id.split(':')[0]}{round_name} length={len(new_consensus)}\n{new_consensus.upper()}\n")

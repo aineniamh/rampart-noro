@@ -1,6 +1,6 @@
 rule map_to_cns:
     input:
-        cns = rules.medaka.output,
+        cns = rules.clean5.output,
         reads = rules.files.params.reads
     output:
         paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
@@ -9,7 +9,7 @@ rule map_to_cns:
 
 rule mask_low_coverage_regions:
     input:
-        cns = rules.medaka.output,
+        cns = rules.clean5.output,
         paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
     params:
         path_to_script = workflow.current_basedir

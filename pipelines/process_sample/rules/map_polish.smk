@@ -40,12 +40,14 @@ rule clean1:
         aln = rules.mafft1.output,
         cns = rules.racon1.output
     params:
-        path_to_script = workflow.current_basedir
+        path_to_script = workflow.current_basedir,
+        seq_name = "{analysis_stem}"
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon1.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
         "--alignment_with_ref {input.aln} "
+        "--name {params.seq_name} "
         "--output_seq {output} "
         "--polish_round 1"
 
@@ -87,12 +89,14 @@ rule clean2:
         aln = rules.mafft2.output,
         cns = rules.racon2.output
     params:
-        path_to_script = workflow.current_basedir
+        path_to_script = workflow.current_basedir,
+        seq_name = "{analysis_stem}"
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon2.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
         "--alignment_with_ref {input.aln} "
+        "--name {params.seq_name} "
         "--output_seq {output} "
         "--polish_round 2"
 
@@ -133,12 +137,14 @@ rule clean3:
         aln = rules.mafft3.output,
         cns = rules.racon3.output
     params:
-        path_to_script = workflow.current_basedir
+        path_to_script = workflow.current_basedir,
+        seq_name = "{analysis_stem}"
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon3.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
         "--alignment_with_ref {input.aln} "
+        "--name {params.seq_name} "
         "--output_seq {output} "
         "--polish_round 3"
 
@@ -180,12 +186,14 @@ rule clean4:
         aln = rules.mafft4.output,
         cns = rules.racon4.output
     params:
-        path_to_script = workflow.current_basedir
+        path_to_script = workflow.current_basedir,
+        seq_name = "{analysis_stem}"
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon4.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
         "--alignment_with_ref {input.aln} "
+        "--name {params.seq_name} "
         "--output_seq {output} "
         "--polish_round 4"
 
@@ -229,11 +237,13 @@ rule clean5:
         aln = rules.mafft5.output,
         cns = rules.medaka.output
     params:
-        path_to_script = workflow.current_basedir
+        path_to_script = workflow.current_basedir,
+        seq_name = "{analysis_stem}"
     output:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/medaka.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
         "--alignment_with_ref {input.aln} "
+        "--name {params.seq_name} "
         "--output_seq {output} "
         "--polish_round medaka"
