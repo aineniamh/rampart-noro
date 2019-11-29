@@ -102,7 +102,6 @@ rule process_sample:
         cns = config["output_path"] + "/consensus_sequences/{sample}.fasta"
     run:
         analysis_stem = stems.fetch("analysis_stem")
-        
         if analysis_stem != "":
             print("Passing {} into processing pipeline.".format(analysis_stem))
             config["analysis_stem"]= analysis_stem
@@ -112,3 +111,5 @@ rule process_sample:
                         "analysis_stem={config[analysis_stem]} "
                         "output_path={params.output_path} "
                         "sample={params.sample}")
+        else:
+            print("Not enough reads to pass an analysis stem to processing pipeline.")

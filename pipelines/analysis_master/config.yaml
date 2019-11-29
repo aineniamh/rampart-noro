@@ -21,6 +21,6 @@ max_read_length: 2500
 ##### Read thresholds #####
 
 min_reads: 100
-min_pcent: 5
+min_pcent: 0
 
 ##### Analysis Stem #####
