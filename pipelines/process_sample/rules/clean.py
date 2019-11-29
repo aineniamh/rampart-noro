@@ -4,8 +4,7 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser(description='Clean up coding consensus.')
-parser.add_argument("--consensus", action="store", type=str, dest="consensus")
-parser.add_argument("--alignment_with_ref", action="store", type=str, dest="alignment_with_ref")
+parser.add_argument("--alignment_with_ref", action="store", type=str, dest="alignment")
 parser.add_argument("--output_seq", action="store", type=str, dest="output_seq")
 parser.add_argument("--polish_round", action="store", type=str, dest="round")
 args = parser.parse_args()
@@ -14,42 +13,44 @@ round_name = ''
 if args.round:
     round_name = f" round_name={args.round}"
 
+def trim_trailing_gaps(alignment):
+    for col in range(alignment.get_alignment_length()):
+        if not "-" in alignment[:, col]:
+            start_position = col
+            break
 
-def find_gaps(aln):
-    gap_dict = {}
-    alignment = AlignIO.read(aln, "fasta")
+    for col in range(alignment.get_alignment_length()):
+        end_index = col+1
+        if not "-" in alignment[:, -end_index]:
+            end_position = col
+            break
 
-    print(f"Reading in {alignment}.\nLooking for gaps in coding sequence.")
-    for i in range(len(alignment[0])):
+    print(f"\nTrimming trailing gaps in alignment.\nAlignment now from {start_position} to {end_position}.\n")    
+    return alignment[:,start_position:-end_position]
 
-        col = alignment[:, i]
-        if len(set(col)) >1:
-            print(alignment[:, i])
-            if '-' in col:
-                print(f"Gap at position {i}: {col}")
-                if col[0]=='-':
-                    gap_dict[i] = ''
-                else:
-                    gap_dict[i] = col.rstrip('-')+'N'
-    return(gap_dict)
+def remove_gaps(aln):
+
+    untrimmed_alignment = AlignIO.read(aln, "fasta")
+    trimmed = trim_trailing_gaps(untrimmed_alignment)
+    
+    print(f"Reading in {aln}.\n\nGaps found:")
+    cns_string = ""
+    for i in range(len(trimmed[0])):
+        col = trimmed[:,i]
+        if len(set(col))>1 and '-' in col:
+            print(f"Position {i+1}:\tReference:\t{col[0]}\tConsensus:\t{col[1]}")
+            if col[0] == '-':
+                pass
+            else:
+                cns_string += 'N'
+        else:
+            cns_string+= col[1]
+    return trimmed[1].id, cns_string
 
 #the rule is to replace a gap in the query with 'N' and to force delete a base that causes a gap in the reference
 with open(args.output_seq, "w") as fw:
 
-    gap_dict = find_gaps(args.alignment_with_ref)
-    
-    for record in SeqIO.parse(args.consensus, "fasta"):
-        
+    cns_id, new_consensus = remove_gaps(args.alignment)
 
-        new_seq = list(record.seq)
-
-        for key in gap_dict:
-            try:
-                new_seq[key]= gap_dict[key]
-            except IndexError:
-                new_seq.append(gap_dict[key])
-        new_seq = ''.join(new_seq).upper()
-        
-
-        fw.write(f">{record.id}{round_name} length={len(new_seq)}\n{new_seq}\n")
+    fw.write(f">{cns_id}{round_name} length={len(new_consensus)}\n{new_consensus}\n")
 

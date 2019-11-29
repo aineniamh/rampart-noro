@@ -6,7 +6,7 @@ from Bio import SeqIO
 def parse_args():
     parser = argparse.ArgumentParser(description='Trim primers.')
 
-    parser.add_argument("--csv", action="store", type=str, dest="csv")
+    parser.add_argument("--cns", action="store", type=str, dest="cns")
     parser.add_argument("--paf", action="store", type=str, dest="paf")
 
     parser.add_argument("--min_coverage", action="store", type=int, dest="min_coverage")
@@ -36,9 +36,10 @@ def get_coverage(paf, cns_len):
             l = l.rstrip("\n")
             tokens = l.split("\t")
             start,end = int(tokens[7]),int(tokens[8])
-            map_span = range(start-1, end-1) #double check this index thing
+            map_span = range(start-1, end-1) #triple check this index thing
             for i in map_span:
                 coverage[i]+=1
+    print(coverage)
     return coverage
 
 def mask_bases(coverage_list, cns_seq, min_coverage):
@@ -60,8 +61,8 @@ if __name__ == '__main__':
     coverage = get_coverage(args.paf,cns_len)
 
     masked_seq = mask_bases(coverage, cns.seq, args.min_coverage)
-
-    with open(args.masked_cns, "w") as fw:
+    print(args)
+    with open(str(args.masked_cns), "w") as fw:
         fw.write(">{}\n{}\n".format(cns.description, masked_seq))
 
 

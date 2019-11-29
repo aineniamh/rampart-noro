@@ -45,7 +45,6 @@ rule clean1:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon1.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
-        "--consensus {input.cns} "
         "--alignment_with_ref {input.aln} "
         "--output_seq {output} "
         "--polish_round 1"
@@ -93,7 +92,6 @@ rule clean2:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon2.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
-        "--consensus {input.cns} "
         "--alignment_with_ref {input.aln} "
         "--output_seq {output} "
         "--polish_round 2"
@@ -140,7 +138,6 @@ rule clean3:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon3.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
-        "--consensus {input.cns} "
         "--alignment_with_ref {input.aln} "
         "--output_seq {output} "
         "--polish_round 3"
@@ -188,7 +185,6 @@ rule clean4:
         config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/racon4.clean.fasta"
     shell:
         "python {params.path_to_script}/clean.py "
-        "--consensus {input.cns} "
         "--alignment_with_ref {input.aln} "
         "--output_seq {output} "
         "--polish_round 4"
@@ -209,33 +205,69 @@ rule medaka:
     params:
         outdir=config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}"
     output:
-        consensus= config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta"
+        config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta"
     threads:
         2
     shell:
         "medaka_consensus -i {input.basecalls} -d {input.draft} -o {params.outdir} -t 2 || touch {output}"
 
+rule mafft5:
+    input:
+       fasta = rules.medaka.output,
+       ref = rules.files.params.ref
+    params:
+        temp_file = config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/temp.medaka.fasta"
+    output:
+        config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/medaka.aln.fasta"
+    shell:
+        "cat {input.ref} {input.fasta} > {params.temp_file} && "
+        "mafft {params.temp_file} > {output} && "
+        "rm {params.temp_file}"
+
+rule clean5:
+    input:
+        aln = rules.mafft5.output,
+        cns = rules.medaka.output
+    params:
+        path_to_script = workflow.current_basedir
+    output:
+        config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/medaka.clean.fasta"
+    shell:
+        "python {params.path_to_script}/clean.py "
+        "--alignment_with_ref {input.aln} "
+        "--output_seq {output} "
+        "--polish_round medaka"
+
 rule map_to_cns:
     input:
-        cns = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta",
+        cns = rules.medaka.output,
         reads = rules.files.params.reads
     output:
         paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
     shell:
-        "minimap2 -x map-ont {input.ref} {input.reads} > {output}"
+        "minimap2 -x map-ont {input.cns} {input.reads} > {output}"
 
 rule mask_low_coverage_regions:
     input:
-        cns = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.fasta",
+        cns = rules.medaka.output,
         paf = config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.mapped.paf"
     params:
         path_to_script = workflow.current_basedir
     output:
-        config["output_path"] + "/binned_{sample}/medaka/{analysis_stem}/consensus.masked.fasta"
+        config["output_path"] +"/binned_{sample}/consensus_sequences/{analysis_stem}.fasta"
     shell:
         """
-        python {params.path_to_script}/rules/mask_low_coverage.py \
-        --cns {input.csv} \
-        --paf {input.reads} \
+        python {params.path_to_script}/mask_low_coverage.py \
+        --cns {input.cns} \
+        --paf {input.paf} \
+        --min_coverage 100 \
         --masked_cns {output}
         """
+
+rule cat_stems:
+    input:
+        expand(config["output_path"] +"/binned_{{sample}}/consensus_sequences/{analysis_stem}.fasta",analysis_stem=config["analysis_stem"])
+    output:
+        config["output_path"] + "/consensus_sequences/{sample}.fasta"
+    shell:
+        "cat {input} > {output}"
