@@ -11,6 +11,7 @@ rule all:
     input:
         expand(config["output_path"] + "/binned_{sample}/consensus_sequences/{analysis_stem}.fasta",sample=config["sample"],analysis_stem=config["analysis_stem"]),
         expand(config["output_path"] + "/consensus_sequences/{sample}.fasta",sample=config["sample"]),
+        expand(config["output_path"] + "/consensus_sequences/{sample}.split.aln.fasta",sample=config["sample"]),
         expand(config["output_path"] + "/binned_{sample}/polishing/{analysis_stem}/mapped.paf",sample=config["sample"],analysis_stem=config["analysis_stem"])
 
 ##### Modules #####

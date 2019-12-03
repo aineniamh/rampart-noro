@@ -14,7 +14,7 @@ rule mask_low_coverage_regions:
     params:
         path_to_script = workflow.current_basedir
     output:
-        config["output_path"] +"/binned_{sample}/consensus_sequences/{analysis_stem}.fasta"
+        config["output_path"] +"/binned_{sample}/consensus_sequences/{analysis_stem}.masked.fasta"
     shell:
         """
         python {params.path_to_script}/mask_low_coverage.py \
@@ -26,8 +26,30 @@ rule mask_low_coverage_regions:
 
 rule cat_stems:
     input:
-        expand(config["output_path"] +"/binned_{{sample}}/consensus_sequences/{analysis_stem}.fasta",analysis_stem=config["analysis_stem"])
+        expand(config["output_path"] +"/binned_{{sample}}/consensus_sequences/{analysis_stem}.masked.fasta",analysis_stem=config["analysis_stem"])
+    output:
+        config["output_path"] + "/consensus_sequences/{sample}.split.fasta"
+    shell:
+        "cat {input} > {output}"
+
+rule aln_to_merge:
+    input:
+        config["output_path"] + "/consensus_sequences/{sample}.split.fasta"
+    output:
+        config["output_path"] + "/consensus_sequences/{sample}.split.aln.fasta"
+    shell:
+        "mafft {input} > {output}"
+
+rule merge:
+    input:
+        rules.aln_to_merge.output
+    params:
+        path_to_script = workflow.current_basedir
     output:
         config["output_path"] + "/consensus_sequences/{sample}.fasta"
     shell:
-        "cat {input} > {output}"
+        """
+        python {params.path_to_script}/merge.py \
+        -i {input} \
+        -o {output} 
+        """

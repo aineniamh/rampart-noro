@@ -26,7 +26,7 @@ def trim_trailing_gaps(alignment):
             end_position = col
             break
 
-    print(f"\nTrimming trailing gaps in alignment.\nAlignment now from {start_position} to {len(alignment)-end_position}.\n")   
+    print(f"\nTrimming trailing gaps in alignment.\nAlignment now from {start_position} to {alignment.get_alignment_length()-end_position}.\n")   
 
     if end_position == 0:
         return alignment[:,start_position:]
